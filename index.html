@@ -43,7 +43,9 @@ body{display:flex;flex-direction:column}
 .fbtn.fm{background:#3d1a1a;color:#ff6666;border-color:#880000}
 .cnt{font-size:10px;color:#555;margin-left:auto}
 .grid-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:7px;padding:10px;background:#070710}
+.grid{display:grid;grid-template-columns:repeat(var(--cols,3),1fr);gap:7px;padding:10px;background:#070710}
+.cols-btn{background:#12122a;border:1px solid #2a2a45;border-radius:6px;padding:5px 9px;color:#888;font-size:11px;font-weight:700;cursor:pointer;min-width:30px;text-align:center}
+.cols-btn.active{background:#FFCB05;color:#000;border-color:#FFCB05}
 .card{background:#1a1a2e;border-radius:10px;padding:7px 4px 6px;text-align:center;cursor:pointer;border:2px solid transparent;transition:transform .12s;position:relative;user-select:none;-webkit-user-select:none}
 .card:active{transform:scale(0.92)}
 .card.owned{border-color:rgba(39,174,96,0.6);background:#0e1e14}
@@ -137,6 +139,15 @@ body{display:flex;flex-direction:column}
   <button class="fbtn" id="bo" onclick="setF('owned')">✅</button>
   <button class="fbtn" id="bm" onclick="setF('missing')">❌</button>
   <span class="cnt" id="cnt"></span>
+  <div style="display:flex;align-items:center;gap:5px;width:100%">
+    <span style="font-size:10px;color:#555;white-space:nowrap">Colonnes :</span>
+    <button class="cols-btn" id="col-1" onclick="setCols(1)">1</button>
+    <button class="cols-btn" id="col-2" onclick="setCols(2)">2</button>
+    <button class="cols-btn active" id="col-3" onclick="setCols(3)">3</button>
+    <button class="cols-btn" id="col-4" onclick="setCols(4)">4</button>
+    <button class="cols-btn" id="col-5" onclick="setCols(5)">5</button>
+    <input id="col-custom" type="number" min="1" max="12" placeholder="…" style="width:36px;background:#12122a;border:1px solid #2a2a45;border-radius:6px;padding:4px 5px;color:#f0f0f0;font-size:11px;font-weight:700;text-align:center;outline:none;-moz-appearance:textfield" oninput="setColsCustom(this.value)">
+  </div>
 </div>
 
 <div class="grid-wrap"><div class="grid" id="grid"></div></div>
@@ -347,7 +358,29 @@ function render(list){
   }).join('');
 }
 
+
+function setCols(n){
+  n=parseInt(n);
+  if(!n||n<1)return;
+  document.documentElement.style.setProperty('--cols',n);
+  [1,2,3,4,5].forEach(i=>{
+    const b=document.getElementById('col-'+i);
+    if(b)b.className='cols-btn'+(i===n?' active':'');
+  });
+  const ci=document.getElementById('col-custom');
+  if(ci){
+    if(![1,2,3,4,5].includes(n)){ci.value=n;ci.style.borderColor='#FFCB05';ci.style.color='#FFCB05';}
+    else{ci.value='';ci.style.borderColor='#2a2a45';ci.style.color='#f0f0f0';}
+  }
+  try{localStorage.setItem('gdx_cols',n);}catch(e){}
+}
+function setColsCustom(v){
+  const n=parseInt(v);
+  if(n>=1&&n<=12)setCols(n);
+}
+
 // ── Init ─────────────────────────────────────────────────────────────────────
+const savedCols=parseInt(localStorage.getItem('gdx_cols')||'3');setCols(savedCols);
 if(!loadLocal()){
   pokemon.forEach(p=>{owned[p.id]=p.def;});
   saveLocal();
