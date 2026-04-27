@@ -139,14 +139,20 @@ body{display:flex;flex-direction:column}
   <button class="fbtn" id="bo" onclick="setF('owned')">✅</button>
   <button class="fbtn" id="bm" onclick="setF('missing')">❌</button>
   <span class="cnt" id="cnt"></span>
-  <div style="display:flex;align-items:center;gap:5px;width:100%">
-    <span style="font-size:10px;color:#555;white-space:nowrap">Colonnes :</span>
+  <div style="display:flex;align-items:center;gap:4px;width:100%;flex-wrap:nowrap;overflow-x:auto">
+    <span style="font-size:10px;color:#555;white-space:nowrap;margin-right:2px">Cols :</span>
     <button class="cols-btn" id="col-1" onclick="setCols(1)">1</button>
     <button class="cols-btn" id="col-2" onclick="setCols(2)">2</button>
     <button class="cols-btn active" id="col-3" onclick="setCols(3)">3</button>
     <button class="cols-btn" id="col-4" onclick="setCols(4)">4</button>
     <button class="cols-btn" id="col-5" onclick="setCols(5)">5</button>
-    <input id="col-custom" type="number" min="1" max="12" placeholder="…" style="width:36px;background:#12122a;border:1px solid #2a2a45;border-radius:6px;padding:4px 5px;color:#f0f0f0;font-size:11px;font-weight:700;text-align:center;outline:none;-moz-appearance:textfield" oninput="setColsCustom(this.value)">
+    <button class="cols-btn" id="col-6" onclick="setCols(6)">6</button>
+    <button class="cols-btn" id="col-7" onclick="setCols(7)">7</button>
+    <button class="cols-btn" id="col-8" onclick="setCols(8)">8</button>
+    <button class="cols-btn" id="col-9" onclick="setCols(9)">9</button>
+    <button class="cols-btn" id="col-10" onclick="setCols(10)">10</button>
+    <button class="cols-btn" id="col-11" onclick="setCols(11)">11</button>
+    <button class="cols-btn" id="col-12" onclick="setCols(12)">12</button>
   </div>
 </div>
 
@@ -361,22 +367,13 @@ function render(list){
 
 function setCols(n){
   n=parseInt(n);
-  if(!n||n<1)return;
+  if(!n||n<1||n>12)return;
   document.documentElement.style.setProperty('--cols',n);
-  [1,2,3,4,5].forEach(i=>{
+  for(let i=1;i<=12;i++){
     const b=document.getElementById('col-'+i);
     if(b)b.className='cols-btn'+(i===n?' active':'');
-  });
-  const ci=document.getElementById('col-custom');
-  if(ci){
-    if(![1,2,3,4,5].includes(n)){ci.value=n;ci.style.borderColor='#FFCB05';ci.style.color='#FFCB05';}
-    else{ci.value='';ci.style.borderColor='#2a2a45';ci.style.color='#f0f0f0';}
   }
   try{localStorage.setItem('gdx_cols',n);}catch(e){}
-}
-function setColsCustom(v){
-  const n=parseInt(v);
-  if(n>=1&&n<=12)setCols(n);
 }
 
 // ── Init ─────────────────────────────────────────────────────────────────────
